@@ -19,7 +19,7 @@ public class Hotel {
 	   addRoomsToHotel(hotelRoomType1);
 	   HotelRoom hotelRoom2Type1=new HotelRoom(1,35000,"Piso 1",true,true,true, "habitación doble"); 
 	   addRoomsToHotel(hotelRoom2Type1);
-	   HotelRoom hotelRoomType2=new HotelRoom(2,250000,"Piso 2",false,true,true, "");
+	   HotelRoom hotelRoomType2=new HotelRoom(2,250000,"Piso 2",false,true,true, "Habitacion doble ");
 	   addRoomsToHotel(hotelRoomType2);
 	   HotelRoom hotelRoomType3=new HotelRoom(3,220000,"Piso 3",true,false,false,"");
 	   addRoomsToHotel(hotelRoomType3);
