@@ -20,6 +20,10 @@ public class HotelRoom {
 	  this.roomDescription =roomDescription;
   }
   
+  public HotelRoom() {
+	  
+  }
+  
   public void setRoomId(int roomId) {
 	  this.roomId=roomId;
   }
