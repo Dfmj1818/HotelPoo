@@ -6,8 +6,9 @@ public class User {
 	private String mail;
 	private String password;
 	private ArrayList<Reserve>reservesList;
+	private String userName;
 
-	public User(String mail,String password) {
+	public User(String mail,String password,String userName) {
 		this.mail=mail;
 		this.password=password;
 
@@ -39,5 +40,13 @@ public class User {
 	
 	public ArrayList<Reserve>getReservesList(){
 		return reservesList;
+	}
+	
+	public void setUserName(String userName) {
+		this.userName=userName;
+	}
+	
+	public String getUserName() {
+		return userName;
 	}
 }
