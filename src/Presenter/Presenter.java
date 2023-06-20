@@ -42,7 +42,6 @@ public class Presenter {
 	
 	
 	
-	
 	public void fillHotelRooms() {
 		hotel.createHotelRooms();
 	}

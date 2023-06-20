@@ -8,10 +8,12 @@ public class Hotel {
 	private ArrayList<HotelRoom>hotelRoomsList;
 	private ArrayList<User>usersDataBase;
 	private View view;
+	private String listAsString;
 
 	public Hotel() {
 		hotelRoomsList=new ArrayList<HotelRoom>();
 		usersDataBase=new ArrayList<User>();
+		
 	}
 
 	public void addRoomsToHotel(HotelRoom hotelRoom) {
@@ -23,14 +25,16 @@ public class Hotel {
 		usersDataBase.add(user);
 
 	}
-	
-	public void searchUserInUsersDataBase(User user) {
-       for(int i=0;i<usersDataBase.size();i++) {
-    	   if(usersDataBase.get(i).getUserMail().equals(user.getUserMail())&&usersDataBase.get(i).getUserPassword().equals(user.getUserPassword())) {
-    		   User userFound=usersDataBase.get(i);
-    		   view.showMessage("Bienvenido"+userFound.getUserMail());
-    	   }
-       }
+
+	public User getUserInUsersDataBase(User user) {
+		for(int i=0;i<usersDataBase.size();i++) {
+			if(usersDataBase.get(i).getUserMail().equals(user.getUserMail())&&usersDataBase.get(i).getUserPassword().equals(user.getUserPassword())) {
+				User userFound=usersDataBase.get(i);
+				return userFound;		
+			}
+
+		}
+		return null;
 	}
 
 	public void deleteHotelRoom(int idToDelete) {
@@ -59,16 +63,30 @@ public class Hotel {
 
 	}
 
-	public ArrayList <HotelRoom>filterByPrice(int maxDigitedPrice,int minDigitedPrice) {
+	public String showHotelRooms() {
 		for(int i=0;i<hotelRoomsList.size();i++) {
-			
-			
+			HotelRoom currentHotelRoom=hotelRoomsList.get(i);
+			listAsString+="Id de la Habitacion : "+currentHotelRoom.getRoomPrice()+" Precio:"+currentHotelRoom.getRoomPrice()+" Ubicacion "+currentHotelRoom.getLocation()+"\n";
 		}
-		return hotelRoomsList;
-		
+		return listAsString;
 	}
 
 
+	public void createReserveForUser() {
+       
+
+	}
+
+	public HotelRoom chooseRoom(int choosedId) {
+		for(int i=0;i<hotelRoomsList.size();i++) {
+			if(hotelRoomsList.get(i).getRoomId()==choosedId) {
+				HotelRoom choosedHotelRoom=hotelRoomsList.get(i);
+				return choosedHotelRoom;
+			}
+
+		}
+		return null;
+	}
 
 
 
