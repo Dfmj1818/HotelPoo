@@ -19,26 +19,26 @@ public class Presenter {
 	private String hotelRoomInformation;
 	private int digitedOptionForMenu;
 	private String digitedName;
-    private String yesOrNotAnswer;
-    private int digitedOptionForRoomMenu;
-    private String arrivalDateString;
-    private String departureDateString;
-    
+	private String yesOrNotAnswer;
+	private int digitedOptionForRoomMenu;
+	private String arrivalDateString;
+	private String departureDateString;
+
 	public Presenter() {
 		view=new View();
 		hotel=new Hotel();
 		hotelRoom=new HotelRoom();
-        yesOrNotAnswer="";
+		yesOrNotAnswer="";
 	}
 
 	public void loginUser() {
 
 		do {
 			view.showMessage("Bienvenido al Hotel Four Seasons de Nueva York\n1.Presiona 1 para registrarte\n2.Digita 2 para Iniciar Sesion\n3.Presiona 3 Para Ver las habitaciones disponibles del hotel\n4.Presiona 4 para Salir  ");
-            digitedOptionForMenu=view.readInt();
-   
+			digitedOptionForMenu=view.readInt();
+
 			switch(digitedOptionForMenu) {
-			
+
 			case 1:
 				view.showMessage("Digita tu Correo Electronico");
 				digitedMail=view.readString();
@@ -63,16 +63,16 @@ public class Presenter {
 				createUserReserve(currentUser);
 				break;
 			case 3:
-				
+
 				break;
 			case 4:
 				view.showMessage("Saliendo de la aplicacion");
-			    System.exit(0);
+				System.exit(0);
 				break;
-				
+
 			default:
 				view.showMessage("La opcion numero "+digitedOptionForMenu+" No existe,Por favor intentalo de nuevo");
-                break;
+				break;
 			}
 
 
@@ -82,9 +82,9 @@ public class Presenter {
 
 
 	}
-	
+
 	public void createUserReserve(User user) {
-		
+
 		view.showMessage("Mira las Habitaciones Disponibles que tenemos\nPresiona el numero respectivo para Seleccionar la opcion que quieras Escoger");
 		viewAvaiablesRooms();
 		digitedOptionForRoomMenu=view.readInt();
@@ -98,8 +98,8 @@ public class Presenter {
 		DateTimeFormatter hotelDateFormat2=DateTimeFormatter.ofPattern("dd/mm/yyyy");
 		LocalDate departureDate=LocalDate.parse(departureDateString,hotelDateFormat2);
 		Reserve currentReserve =hotel.createReserveForUser(user, choosedRoomByUser, arrivalDate, departureDate);
-	    user.addReserveToList(currentReserve);
-		
+		user.addReserveToList(currentReserve);
+
 	}
 
 
