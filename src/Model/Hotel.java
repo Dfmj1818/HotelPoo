@@ -1,5 +1,6 @@
 package Model;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import View.View;
@@ -13,7 +14,7 @@ public class Hotel {
 	public Hotel() {
 		hotelRoomsList=new ArrayList<HotelRoom>();
 		usersDataBase=new ArrayList<User>();
-		
+		listAsString="";
 	}
 
 	public void addRoomsToHotel(HotelRoom hotelRoom) {
@@ -50,32 +51,31 @@ public class Hotel {
 
 	public void createHotelRooms() {
 
-		HotelRoom hotelRoomType1=new HotelRoom(1,350000,"Piso 1",true,true,true, "habitación sencilla");
-		addRoomsToHotel(hotelRoomType1);
-		HotelRoom hotelRoom2Type1=new HotelRoom(1,35000,"Piso 1",true,true,true, "habitación doble"); 
-		addRoomsToHotel(hotelRoom2Type1);
-		HotelRoom hotelRoomType2=new HotelRoom(2,250000,"Piso 2",false,true,true, "Habitacion doble ");
-		addRoomsToHotel(hotelRoomType2);
-		HotelRoom hotelRoomType3=new HotelRoom(3,220000,"Piso 3",true,false,false,"Habitacion doble");
-		addRoomsToHotel(hotelRoomType3);
-		HotelRoom hotelRoom2Type3=new HotelRoom(4,22000,"Piso 3",true,false,false,"Habitacion Sencilla");
-		addRoomsToHotel(hotelRoom2Type3);
-
+		HotelRoom premiumHotelRoom=new HotelRoom(1,350000,"Piso 3",false,true,true, "Habitacion Premium Que viene con jacuzzi,Cama Doble ");
+		addRoomsToHotel(premiumHotelRoom);		
+		HotelRoom semiPremiumHotelRoom=new HotelRoom(2,320000,"Piso 2",true,false,false,"Habitacion semiPremium Que viene con camaDoble y Television ");
+		addRoomsToHotel(semiPremiumHotelRoom);
+		HotelRoom simpleHotelRoom=new HotelRoom(3,50000,"Piso 1",false,false,false," Habitacion Sencilla que viene con unicamente una cama sencilla y television");
+		addRoomsToHotel(simpleHotelRoom);
 	}
 
 	public String showHotelRooms() {
 		for(int i=0;i<hotelRoomsList.size();i++) {
 			HotelRoom currentHotelRoom=hotelRoomsList.get(i);
-			listAsString+="Id de la Habitacion : "+currentHotelRoom.getRoomPrice()+" Precio:"+currentHotelRoom.getRoomPrice()+" Ubicacion "+currentHotelRoom.getLocation()+"\n";
+			listAsString+="Id: "+currentHotelRoom.getRoomId()+" Precio:"+currentHotelRoom.getRoomPrice()+" Ubicacion "+currentHotelRoom.getLocation()+"\n";
 		}
 		return listAsString;
 	}
 
 
-	public void createReserveForUser() {
-       
+
+	public Reserve createReserveForUser(User user,HotelRoom hotelRoom,LocalDate arrivalDate,LocalDate departureDate ) {
+		Reserve reserve=new Reserve(user,hotelRoom,arrivalDate,departureDate);
+		return reserve;     
 
 	}
+
+
 
 	public HotelRoom chooseRoom(int choosedId) {
 		for(int i=0;i<hotelRoomsList.size();i++) {
@@ -89,7 +89,16 @@ public class Hotel {
 	}
 
 
+	public void verifyMail(String mail) {
+		try {
+			if(mail.contains("@")) {
+				view.showMessage("Correo Digitado con Formato Correcto");
+			}
 
+		}catch(Exception e) {
+			view.showMessage("Correo Digitado de Forma incorrecta");
+		}
+	}
 
 
 
