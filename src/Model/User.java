@@ -49,4 +49,11 @@ public class User {
 	public String getUserName() {
 		return userName;
 	}
+	
+	public void viewReservesList() {
+		for(int i=0;i<reservesList.size();i++) {
+			Reserve currentReserve=reservesList.get(i);
+			
+		}
+	}
 }
