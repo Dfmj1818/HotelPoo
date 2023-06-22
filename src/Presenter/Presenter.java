@@ -18,8 +18,7 @@ public class Presenter {
 	private String digitedPassword;
 	private String hotelRoomInformation;
 	private int digitedOptionForMenu;
-	private String digitedName;
-	private String yesOrNotAnswer;
+	private String digitedName;	
 	private int digitedOptionForRoomMenu;
 	private String arrivalDateString;
 	private String departureDateString;
@@ -28,7 +27,7 @@ public class Presenter {
 		view=new View();
 		hotel=new Hotel();
 		hotelRoom=new HotelRoom();
-		yesOrNotAnswer="";
+
 	}
 
 	public void loginUser() {
@@ -48,7 +47,7 @@ public class Presenter {
 				digitedName=view.readString();
 				User user=new User(digitedMail,digitedPassword,digitedName);
 				hotel.addUserToUsersDataBase(user);
-				createUserReserve(user);
+				runServices(user);
 				break;
 
 			case 2:
@@ -60,7 +59,7 @@ public class Presenter {
 				digitedName=view.readString();
 				User currentUser=hotel.getUserInUsersDataBase(new User(digitedMail,digitedPassword,digitedName));
 				view.showMessage("Bienvenido "+currentUser.getUserName());
-				createUserReserve(currentUser);
+				runServices(currentUser);
 				break;
 			case 3:
 
@@ -78,16 +77,44 @@ public class Presenter {
 
 
 
-		}while(yesOrNotAnswer.equalsIgnoreCase("yes"));
+		}while(digitedOptionForMenu!=4);
 
 
 	}
 
-	public void createUserReserve(User user) {
+	public void runServices(User user) {
+		int digitedOptionForSecondMenu;
+		String yesOrNotAnswer;
 
-		view.showMessage("Mira las Habitaciones Disponibles que tenemos\nPresiona el numero respectivo para Seleccionar la opcion que quieras Escoger");
-		viewAvaiablesRooms();
-		digitedOptionForRoomMenu=view.readInt();
+		view.showMessage("Hemos Verificado Tu Identidad,Bienvenido "+user.getUserName());
+		view.showMessage("¿Que Deseas Hacer?\n1.Ver las Habitaciones Dispoinibles\n2.Ver Tu lista de Reservas\n3.Salir");
+		digitedOptionForSecondMenu=view.readInt();
+		do {
+			switch(digitedOptionForSecondMenu) {
+			case 1:
+				view.showMessage("Presiona La habitacion Que desees añadir a tu lista de reservas");
+				viewAvaiablesRooms();
+				view.showMessage("¿Deseas Hacer Una Reserva De esta Habitacion?"); 
+				yesOrNotAnswer=view.readString();
+				if(yesOrNotAnswer.equalsIgnoreCase("si")) {
+					createUserReserve(user);
+				}
+				break;
+
+			case 2:
+				view.showMessage("Estas Son Tus Reservas Hasta El momento"+user.viewReservesList());
+				break;
+
+			case 3:
+				view.showMessage("Saliendo De la Aplicaciom");
+				System.exit(0);
+			}
+
+		}while(digitedOptionForSecondMenu!=3);
+
+	}
+
+	public void createUserReserve(User user){
 		HotelRoom choosedRoomByUser=hotel.chooseRoom(digitedOptionForRoomMenu); 
 		view.showMessage("Digita la fecha de llegada Al Hotel\n Por favor digitala en formato dia/mes/año");
 		arrivalDateString=view.readString();
@@ -99,15 +126,13 @@ public class Presenter {
 		LocalDate departureDate=LocalDate.parse(departureDateString,hotelDateFormat2);
 		Reserve currentReserve =hotel.createReserveForUser(user, choosedRoomByUser, arrivalDate, departureDate);
 		user.addReserveToList(currentReserve);
-
+		view.showMessage("El valor total De la Reserva es de:"+hotel.calculateTotalValueOfReserve(currentReserve));
 	}
 
 
 
 	public void viewAvaiablesRooms() {
-		hotelRoomInformation=hotel.showHotelRooms();
-		view.showMessage(hotelRoomInformation);
-
+		view.showMessage(hotel.showHotelRooms());
 	}
 
 
