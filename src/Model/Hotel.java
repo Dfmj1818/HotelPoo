@@ -1,6 +1,7 @@
 package Model;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
 import View.View;
@@ -100,7 +101,13 @@ public class Hotel {
 		}
 	}
 
+	public long calculateTotalValueOfReserve(Reserve reserve) {
+		int currentPriceReserve=reserve.getHotelRoom().getRoomPrice();
+		long daysInTheHotel=ChronoUnit.DAYS.between(reserve.getArrivalDate(),reserve.getArrivalDate());
+		long totalValueOfReserve=currentPriceReserve*daysInTheHotel;
 
+		   return totalValueOfReserve;
+	}
 
 
 
