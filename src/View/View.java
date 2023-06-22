@@ -15,6 +15,7 @@ public class View {
 	public void showMessage(String message) {
 		System.out.println(message);
 	}
+	
     //Este metodo Devuelve un valor de tipo string 
 	public String readString() {
 		return scannerForString.nextLine();
