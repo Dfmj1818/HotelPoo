@@ -2,11 +2,13 @@ package Presenter;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Random;
 
 import Model.Hotel;
 import Model.HotelRoom;
 import Model.Reserve;
 import Model.User;
+import Model.VirtualCard;
 import View.View;
 
 public class Presenter {
@@ -45,6 +47,7 @@ public class Presenter {
 				digitedPassword=view.readString();
 				view.showMessage("Digita Un Nombre de Usuario");
 				digitedName=view.readString();
+
 				User user=new User(digitedMail,digitedPassword,digitedName);
 				hotel.addUserToUsersDataBase(user);
 				runServices(user);
@@ -85,7 +88,6 @@ public class Presenter {
 	public void runServices(User user) {
 		int digitedOptionForSecondMenu;
 		String yesOrNotAnswer;
-
 		view.showMessage("Hemos Verificado Tu Identidad,Bienvenido "+user.getUserName());
 		view.showMessage("¿Que Deseas Hacer?\n1.Ver las Habitaciones Dispoinibles\n2.Ver Tu lista de Reservas\n3.Salir");
 		digitedOptionForSecondMenu=view.readInt();
@@ -114,6 +116,7 @@ public class Presenter {
 
 	}
 
+
 	public void createUserReserve(User user){
 		HotelRoom choosedRoomByUser=hotel.chooseRoom(digitedOptionForRoomMenu); 
 		view.showMessage("Digita la fecha de llegada Al Hotel\n Por favor digitala en formato dia/mes/año");
@@ -127,6 +130,37 @@ public class Presenter {
 		Reserve currentReserve =hotel.createReserveForUser(user, choosedRoomByUser, arrivalDate, departureDate);
 		user.addReserveToList(currentReserve);
 		view.showMessage("El valor total De la Reserva es de:"+hotel.calculateTotalValueOfReserve(currentReserve));
+		 if(verifyUserVirtualCardFunds(user,choosedRoomByUser)) {
+			 view.showMessage("Reserva añadida Con Exito");
+			 user.addReserveToList(currentReserve);		 
+		 }
+		 else {
+			 view.showMessage("No tienes Fondos Suficientes");
+		 }
+		
+	}
+
+	public boolean verifyUserVirtualCardFunds(User user,HotelRoom choosedRoomByUser) {
+		int CCV;
+		int cardCode;
+		String expirationDateAsString;
+		LocalDate expirationDate;
+        boolean sufficientFundsOnCard;
+        
+		view.showMessage("Digita el Codigo de tu tarjeta");
+		cardCode=view.readInt();
+		view.showMessage("Digita el CCV de tu Tarjeta");
+		CCV=view.readInt();
+		view.showMessage("Digita la fecha De Expiracion de tu tarjeta");
+		expirationDateAsString=view.readString();
+		DateTimeFormatter expeditionDateFormat=DateTimeFormatter.ofPattern("dd/mm/yyyy");
+		expirationDate=LocalDate.parse(expirationDateAsString,expeditionDateFormat);
+		VirtualCard virtualCard=new VirtualCard(user,cardCode,CCV,expirationDate);
+		//Verifica Los Fondos de la tarjeta,Si los fondos son suficientes retorna True ,Si son Insuficientes Retorna False
+        sufficientFundsOnCard=hotel.verifyUserFunds(virtualCard, choosedRoomByUser); 
+        
+        	return sufficientFundsOnCard;
+
 	}
 
 
