@@ -103,12 +103,17 @@ public class Hotel {
 
 	public long calculateTotalValueOfReserve(Reserve reserve) {
 		int currentPriceReserve=reserve.getHotelRoom().getRoomPrice();
-		long daysInTheHotel=ChronoUnit.DAYS.between(reserve.getArrivalDate(),reserve.getArrivalDate());
+		long daysInTheHotel=ChronoUnit.DAYS.between(reserve.getArrivalDate(),reserve.getDepartureDate());
 		long totalValueOfReserve=currentPriceReserve*daysInTheHotel;
 
 		   return totalValueOfReserve;
 	}
 
+	public boolean verifyUserFunds(VirtualCard virtualCard,HotelRoom choosedRoomByUser) {
+		//Funciona Como un If Else,retorna true si se cumple la condicion,Retorna False en caso de No Cumplir la Condicion
+		return virtualCard.getFunds()>choosedRoomByUser.getRoomPrice();
+		
+	}
 
 
 }
