@@ -1,27 +1,27 @@
 package Model;
 
 import java.time.LocalDate;
+import java.util.Random;
 
 public class VirtualCard {
-	
+
 	private int cardCode;
 	private int funds;
 	private int CCV;
-	private LocalDate expeditionDate;
 	private LocalDate expirationDate;
+	private Random randomFunds;
 	
-	public VirtualCard(int cardCode,int funds,int CCV,LocalDate expeditionDate,LocalDate expirationDate) {
+	public VirtualCard(User user,int cardCode,int CCV,LocalDate expirationDate) {
 		this.cardCode=cardCode;
-		this.funds=funds;
+		this.funds=generateRandomFunds();
 		this.CCV=CCV;
-		this.expeditionDate=expeditionDate;
-		this.expirationDate=expeditionDate;
-	}
 	
+	}
+
 	public void setCardCode(int cardCode) {
 		this.cardCode=cardCode;
 	}
-	
+
 	public int getCardCode() {
 		return cardCode;
 	}
@@ -29,17 +29,17 @@ public class VirtualCard {
 	public void setFunds(int funds) {
 		this.funds=funds;
 	}
-	
+
 	public int getFunds() {
 		return funds;
 	}
 	
-	public void setExpeditionDate(LocalDate expeditionDate) {
-		this.expeditionDate=expirationDate;
+	public void setCCV(int CCV) {
+		this.CCV=CCV;
 	}
 	
-	public LocalDate getExpeditionDate() {
-		return expeditionDate;
+	public int getCCV() {
+		return CCV;
 	}
 	
 	public void setExpirationDate(LocalDate expirationDate) {
@@ -49,5 +49,11 @@ public class VirtualCard {
 	public LocalDate getExpirationDate() {
 		return expirationDate;
 	}
-	
+
+   public int generateRandomFunds() {
+	   int funds=randomFunds.nextInt(500000);
+	   return funds;
+   }
+   
+
 }
