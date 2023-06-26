@@ -12,6 +12,8 @@ public class User {
 	public User(String mail,String password,String userName) {
 		this.mail=mail;
 		this.password=password;
+		this.userName=userName;
+		reservesList=new ArrayList<Reserve>();
 		listAsString="";
 	}
 
@@ -54,7 +56,7 @@ public class User {
 	public String viewReservesList() {
 		for(int i=0;i<reservesList.size();i++) {
 			Reserve currentReserve=reservesList.get(i);
-			listAsString+="Datos de la Habitacion del Hotel: "+currentReserve.getHotelRoom()+"\nFecha de llegada Al hotel "+currentReserve.getArrivalDate()+"\nFecha de Salida Del hotel "+currentReserve.getDepartureDate()+"\n";
+			listAsString+="Datos de la Habitacion del Hotel: "+currentReserve.getHotelRoom().getRoomDescription()+"\nFecha de llegada Al hotel "+currentReserve.getArrivalDate()+"\nFecha de Salida Del hotel "+currentReserve.getDepartureDate()+"\n";
 		}
 		return listAsString;
 	}
