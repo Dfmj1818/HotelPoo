@@ -64,7 +64,7 @@ public class Hotel {
 		for(int i=0;i<hotelRoomsList.size();i++) {
 			HotelRoom currentHotelRoom=hotelRoomsList.get(i);
 			listAsString+="Id: "+currentHotelRoom.getRoomId()+" Precio:"+currentHotelRoom.getRoomPrice()+" Ubicacion "+currentHotelRoom.getLocation()+"\n";
-		}
+		}	
 		return listAsString;
 	}
 
@@ -89,16 +89,9 @@ public class Hotel {
 		return null;
 	}
 
-
-	public void verifyMail(String mail) {
-		try {
-			if(mail.contains("@")) {
-				view.showMessage("Correo Digitado con Formato Correcto");
-			}
-
-		}catch(Exception e) {
-			view.showMessage("Correo Digitado de Forma incorrecta");
-		}
+    //se Modifico
+	public boolean verifyMail(String mail) {
+		return mail.contains("@")&& mail.endsWith(".com");
 	}
 
 	public long calculateTotalValueOfReserve(Reserve reserve) {
@@ -108,10 +101,10 @@ public class Hotel {
 
 		   return totalValueOfReserve;
 	}
-
+// Se hizo Correccion
 	public boolean verifyUserFunds(VirtualCard virtualCard,HotelRoom choosedRoomByUser) {
 		//Funciona Como un If Else,retorna true si se cumple la condicion,Retorna False en caso de No Cumplir la Condicion
-		return virtualCard.getFunds()>choosedRoomByUser.getRoomPrice();
+		return virtualCard.generateRandomFunds()>choosedRoomByUser.getRoomPrice();
 		
 	}
 
