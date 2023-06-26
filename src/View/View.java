@@ -1,5 +1,6 @@
 package View;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class View {
@@ -15,14 +16,15 @@ public class View {
 	public void showMessage(String message) {
 		System.out.println(message);
 	}
-	
-    //Este metodo Devuelve un valor de tipo string 
+
+	//Este metodo Devuelve un valor de tipo string 
 	public String readString() {
 		return scannerForString.nextLine();
 	}
-    //Este metodo Devuelve un valor de tipo Entero
-	public int readInt() {
+	//Este metodo Devuelve un valor de tipo Entero
+	public int readInt() {		
 		return scannerForInt.nextInt();
+
 	}
 
 }
