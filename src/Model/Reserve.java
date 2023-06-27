@@ -10,6 +10,8 @@ public class Reserve {
 	
 
 	public Reserve(User user,HotelRoom hotelRoom,LocalDate arrivalDate,LocalDate departureDate) {
+		this.arrivalDate=arrivalDate;
+		this.departureDate=departureDate;
 		this.user=user;
 		this.hotelRoom=hotelRoom;
 		this.arrivalDate=arrivalDate;
