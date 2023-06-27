@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import Exceptions.InsufficientFundsException;
+import Exceptions.UserNotFoundException;
 import Model.Hotel;
 import Model.HotelRoom;
 import Model.Reserve;
@@ -23,6 +24,7 @@ public class Presenter {
 	private String digitedName;	
 	private String arrivalDateString;
 	private String departureDateString;
+	
 
 	public Presenter() {
 		view=new View();
@@ -30,9 +32,12 @@ public class Presenter {
 		hotelRoom=new HotelRoom();
 
 	}
-	
-   // Se hizo Correccion 
+
+	// Se hizo Correccion 
 	public void loginUser() {
+		final int maxAttempts=3;
+		int attempts=0;
+
 		do {
 			view.showMessage("Bienvenido al Hotel Four Seasons de Nueva York\n1.Presiona 1 para registrarte\n2.Digita 2 para Iniciar Sesion\n3.Presiona 3 para Salir  ");
 			digitedOptionForMenu=view.readInt();
@@ -64,9 +69,18 @@ public class Presenter {
 				digitedPassword=view.readString();
 				view.showMessage("Digita el Nombre Del Usuario");
 				digitedName=view.readString();
-				User currentUser=hotel.getUserInUsersDataBase(new User(digitedMail,digitedPassword,digitedName));
-				view.showMessage("Bienvenido "+currentUser.getUserName());
-				runServices(currentUser);
+				hotel.verifyMail(digitedMail);
+				try {
+					User currentUser=hotel.getUserInUsersDatabase(new User(digitedMail,digitedPassword,digitedName));
+					view.showMessage("Bienvenido "+currentUser.getUserName());
+					runServices(currentUser);
+				}
+				catch (UserNotFoundException e) {
+					attempts++;
+					view.showMessage("Error:"+e.getMessage());
+					loginUser();
+				}
+
 				break;
 			case 3:
 				view.showMessage("Saliendo de la aplicacion");
@@ -137,7 +151,7 @@ public class Presenter {
 
 	public void createUserReserve(User user,int choosedRoomByUser){
 		try {
-			
+
 			HotelRoom choosedRoom=hotel.chooseRoom(choosedRoomByUser); 
 			view.showMessage("Digita la fecha de llegada Al Hotel\n Por favor digitala en formato dia/mes/año");
 			arrivalDateString=view.readString();
@@ -150,21 +164,22 @@ public class Presenter {
 			view.showMessage("El valor total De la Reserva es de:"+hotel.calculateTotalValueOfReserve(currentReserve));
 			if(verifyUserVirtualCardFunds(user,choosedRoom)==true) {
 				view.showMessage("Reserva añadida Con Exito");
-				user.addReserveToList(currentReserve);		 
+				user.addReserveToList(currentReserve);
+				hotel.addReservesTohotelReservesList(currentReserve);
 			}
-			else {
+			 else {
 				throw new InsufficientFundsException();
 			}
 
 		}	
-		   catch(DateTimeParseException dateException) {
+		catch(DateTimeParseException dateException) {
 			view.showMessage("Error al ingresar el formato de Fecha incorrecto"+dateException.getMessage()+dateException.getCause());
-			
-		   }
-		    catch(Exception e) {
-			  view.showMessage("Error: "+e.getMessage()+e.getCause());
-			  
-		   }
+
+		}
+		catch(Exception e) {
+			view.showMessage("Error: "+e.getMessage()+e.getCause());
+
+		}
 
 	}
 
@@ -176,7 +191,6 @@ public class Presenter {
 		String expirationDateAsString;
 		LocalDate expirationDate;
 		boolean sufficientFundsOnCard;
-
 		view.showMessage("Digita el Codigo de tu tarjeta");
 		cardCode=view.readInt();
 		view.showMessage("Digita el CCV de tu Tarjeta");
@@ -188,13 +202,10 @@ public class Presenter {
 		VirtualCard virtualCard=new VirtualCard(user,cardCode,CCV,expirationDate);
 		//Verifica Los Fondos de la tarjeta,Si los fondos son suficientes retorna True ,Si son Insuficientes Retorna False
 		sufficientFundsOnCard=hotel.verifyUserFunds(virtualCard, choosedRoomByUser); 
-
+        
 		return sufficientFundsOnCard;
 
 	}
-	//Excepcion  de datos insertados
-	//Excepcion de saldo insuficiente en la tarjeta 
-	//
 
 
 	public void viewAvaiablesRooms() {
