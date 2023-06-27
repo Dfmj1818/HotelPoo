@@ -4,17 +4,20 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
+import Exceptions.UserNotFoundException;
 import View.View;
 
 public class Hotel {
 	private ArrayList<HotelRoom>hotelRoomsList;
 	private ArrayList<User>usersDataBase;
+	private ArrayList<Reserve>hotelReservesList;
 	private View view;
 	private String listAsString;
 
 	public Hotel() {
 		hotelRoomsList=new ArrayList<HotelRoom>();
 		usersDataBase=new ArrayList<User>();
+		hotelReservesList=new ArrayList<Reserve>();
 		listAsString="";
 	}
 
@@ -28,15 +31,37 @@ public class Hotel {
 
 	}
 
-	public User getUserInUsersDataBase(User user) {
+	public void addReservesTohotelReservesList(Reserve reserve) {
+		hotelReservesList.add(reserve);
+	}
+
+	public void checkRoomAvaiability(Reserve reserve) {
+		if(hotelReservesList.isEmpty()) {
+           view.showMessage("Esta Habitacion No tiene Reservas Previas,Todas Las Fechas Estan Disponibles");
+		}
+		else {
+			for(int i=0;i<hotelReservesList.size();i++) {		
+				if(hotelReservesList.get(i).getHotelRoom().getRoomId()==reserve.getHotelRoom().getRoomId()){
+					Reserve reserveToVerify=hotelReservesList.get(i);
+					LocalDate arrivalDateOfThePreviousReserve=reserveToVerify.getArrivalDate();
+					LocalDate departureDateOfThePreviousReserve=reserveToVerify.getDepartureDate();
+			        //IMPLEMENTACION PENDIENTE
+				}
+			}
+		}	
+
+	}
+
+
+
+	public User getUserInUsersDatabase(User user) {
 		for(int i=0;i<usersDataBase.size();i++) {
 			if(usersDataBase.get(i).getUserMail().equals(user.getUserMail())&&usersDataBase.get(i).getUserPassword().equals(user.getUserPassword())) {
 				User userFound=usersDataBase.get(i);
 				return userFound;		
 			}
-
 		}
-		return null;
+		throw new UserNotFoundException();
 	}
 
 	public void deleteHotelRoom(int idToDelete) {
@@ -59,6 +84,7 @@ public class Hotel {
 		HotelRoom simpleHotelRoom=new HotelRoom(3,50000,"Piso 1",false,false,false," Habitacion Sencilla que viene con unicamente una cama sencilla y television");
 		addRoomsToHotel(simpleHotelRoom);
 	}
+
 
 	public String showHotelRooms() {
 		for(int i=0;i<hotelRoomsList.size();i++) {
@@ -89,7 +115,7 @@ public class Hotel {
 		return null;
 	}
 
-    //se Modifico
+	//se Modifico
 	public boolean verifyMail(String mail) {
 		return mail.contains("@")&& mail.endsWith(".com");
 	}
@@ -99,13 +125,13 @@ public class Hotel {
 		long daysInTheHotel=ChronoUnit.DAYS.between(reserve.getArrivalDate(),reserve.getDepartureDate());
 		long totalValueOfReserve=currentPriceReserve*daysInTheHotel;
 
-		   return totalValueOfReserve;
+		return totalValueOfReserve;
 	}
-// Se hizo Correccion
+	// Se hizo Correccion
 	public boolean verifyUserFunds(VirtualCard virtualCard,HotelRoom choosedRoomByUser) {
 		//Funciona Como un If Else,retorna true si se cumple la condicion,Retorna False en caso de No Cumplir la Condicion
 		return virtualCard.generateRandomFunds()>choosedRoomByUser.getRoomPrice();
-		
+
 	}
 
 
