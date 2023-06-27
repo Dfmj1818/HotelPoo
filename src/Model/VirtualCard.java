@@ -12,6 +12,7 @@ public class VirtualCard {
 
 
 	public VirtualCard(User user,int cardCode,int CCV,LocalDate expirationDate) {	
+		this.expirationDate=expirationDate;
 		this.cardCode=cardCode;
 		this.funds=generateRandomFunds();
 		this.CCV=CCV;
