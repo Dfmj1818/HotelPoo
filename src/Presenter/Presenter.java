@@ -3,6 +3,8 @@ package Presenter;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+
+import Exceptions.AttemptsExceededException;
 import Exceptions.InsufficientFundsException;
 import Exceptions.UserNotFoundException;
 import Model.Hotel;
@@ -24,7 +26,9 @@ public class Presenter {
 	private String digitedName;	
 	private String arrivalDateString;
 	private String departureDateString;
+	int attempts=0;
 	
+
 
 	public Presenter() {
 		view=new View();
@@ -35,9 +39,6 @@ public class Presenter {
 
 	// Se hizo Correccion 
 	public void loginUser() {
-		final int maxAttempts=3;
-		int attempts=0;
-
 		do {
 			view.showMessage("Bienvenido al Hotel Four Seasons de Nueva York\n1.Presiona 1 para registrarte\n2.Digita 2 para Iniciar Sesion\n3.Presiona 3 para Salir  ");
 			digitedOptionForMenu=view.readInt();
@@ -58,7 +59,7 @@ public class Presenter {
 				}
 				else {
 					view.showMessage("Correo Escrito de Forma Incorrecta,Vuelve a Intentarlo\n");
-					loginUser();
+					this.loginUser();
 				}
 				break;
 
@@ -78,9 +79,14 @@ public class Presenter {
 				catch (UserNotFoundException e) {
 					attempts++;
 					view.showMessage("Error:"+e.getMessage());
-					loginUser();
+					if(attempts>5) {
+						throw new AttemptsExceededException();
+					}
+					else{
+						this.loginUser();
+					}
 				}
-
+				
 				break;
 			case 3:
 				view.showMessage("Saliendo de la aplicacion");
@@ -99,6 +105,7 @@ public class Presenter {
 
 
 	}
+
 	//Se hizo Correccion
 	public void runServices(User user) {
 		int digitedOptionForSecondMenu;
@@ -128,9 +135,12 @@ public class Presenter {
 				view.showMessage("Estas Son Tus Reservas Hasta El momento"+user.viewReservesList());
 				view.showMessage("¿Deseas Hacer Otra reservacion?");
 				yesOrNotAnswer=view.readString();
-				if(yesOrNotAnswer.equalsIgnoreCase("No")){
+				if(yesOrNotAnswer.equalsIgnoreCase("si")){
+					this.runServices(user);
+				}
+				else {
 					view.showMessage("Volviendo Al Menu Principal.....");
-					loginUser();
+					this.loginUser();
 					break;
 				}
 			case 3:
@@ -150,36 +160,28 @@ public class Presenter {
 
 
 	public void createUserReserve(User user,int choosedRoomByUser){
-		try {
 
-			HotelRoom choosedRoom=hotel.chooseRoom(choosedRoomByUser); 
-			view.showMessage("Digita la fecha de llegada Al Hotel\n Por favor digitala en formato dia/mes/año");
-			arrivalDateString=view.readString();
-			DateTimeFormatter hotelDateFormat=DateTimeFormatter.ofPattern("dd/MM/yyyy");
-			LocalDate arrivalDate=LocalDate.parse(arrivalDateString,hotelDateFormat); 
-			view.showMessage("Digita Tu Fecha de Salida Del Hotel\n Por favor Digitala en formato dia/mes/año");
-			departureDateString=view.readString();
-			LocalDate departureDate=LocalDate.parse(departureDateString,hotelDateFormat);
-			Reserve currentReserve =hotel.createReserveForUser(user, choosedRoom, arrivalDate, departureDate);
-			view.showMessage("El valor total De la Reserva es de:"+hotel.calculateTotalValueOfReserve(currentReserve));
-			if(verifyUserVirtualCardFunds(user,choosedRoom)==true) {
-				view.showMessage("Reserva añadida Con Exito");
-				user.addReserveToList(currentReserve);
-				hotel.addReservesTohotelReservesList(currentReserve);
-			}
-			 else {
-				throw new InsufficientFundsException();
-			}
-
-		}	
-		catch(DateTimeParseException dateException) {
-			view.showMessage("Error al ingresar el formato de Fecha incorrecto"+dateException.getMessage()+dateException.getCause());
-
+		HotelRoom choosedRoom=hotel.chooseRoom(choosedRoomByUser); 
+		view.showMessage("Digita la fecha de llegada Al Hotel\n Por favor digitala en formato dia/mes/año");
+		arrivalDateString=view.readString();
+		DateTimeFormatter hotelDateFormat=DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		LocalDate arrivalDate=LocalDate.parse(arrivalDateString,hotelDateFormat); 
+		view.showMessage("Digita Tu Fecha de Salida Del Hotel\n Por favor Digitala en formato dia/mes/año");
+		departureDateString=view.readString();
+		LocalDate departureDate=LocalDate.parse(departureDateString,hotelDateFormat);
+		Reserve currentReserve =hotel.createReserveForUser(user, choosedRoom, arrivalDate, departureDate);
+		view.showMessage("El valor total De la Reserva es de:"+hotel.calculateTotalValueOfReserve(currentReserve));
+		if(verifyUserVirtualCardFunds(user,choosedRoom)==true) {
+			view.showMessage("Reserva añadida Con Exito");
+			user.addReserveToList(currentReserve);
+			hotel.addReservesTohotelReservesList(currentReserve);
 		}
-		catch(Exception e) {
-			view.showMessage("Error: "+e.getMessage()+e.getCause());
-
+		else {
+			throw new InsufficientFundsException();
 		}
+
+
+
 
 	}
 
@@ -202,7 +204,7 @@ public class Presenter {
 		VirtualCard virtualCard=new VirtualCard(user,cardCode,CCV,expirationDate);
 		//Verifica Los Fondos de la tarjeta,Si los fondos son suficientes retorna True ,Si son Insuficientes Retorna False
 		sufficientFundsOnCard=hotel.verifyUserFunds(virtualCard, choosedRoomByUser); 
-        
+
 		return sufficientFundsOnCard;
 
 	}
