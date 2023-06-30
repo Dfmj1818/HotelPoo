@@ -13,7 +13,8 @@ public class Hotel {
 	private ArrayList<Reserve>hotelReservesList;
 	private View view;
 	private String listAsString;
-
+    
+    
 	public Hotel() {
 		hotelRoomsList=new ArrayList<HotelRoom>();
 		usersDataBase=new ArrayList<User>();
@@ -84,14 +85,23 @@ public class Hotel {
 		HotelRoom simpleHotelRoom=new HotelRoom(3,50000,"Piso 1",false,false,false," Habitacion Sencilla que viene con unicamente una cama sencilla y television");
 		addRoomsToHotel(simpleHotelRoom);
 	}
-
+	
 
 	public String showHotelRooms() {
+		StringBuilder roomInformation=new StringBuilder();
+		
 		for(int i=0;i<hotelRoomsList.size();i++) {
 			HotelRoom currentHotelRoom=hotelRoomsList.get(i);
-			listAsString+="Id: "+currentHotelRoom.getRoomId()+" Precio:"+currentHotelRoom.getRoomPrice()+" Ubicacion "+currentHotelRoom.getLocation()+"\n";
+			roomInformation.append("Id ");
+			roomInformation.append(currentHotelRoom.getRoomId());
+			roomInformation.append(" Precio ");
+			roomInformation.append(currentHotelRoom.getRoomPrice());
+			roomInformation.append(" Ubicacion ");
+			roomInformation.append(currentHotelRoom.getLocation());
+			roomInformation.append("\n");
 		}	
-		return listAsString;
+		return roomInformation.toString();
+		
 	}
 
 
@@ -115,10 +125,18 @@ public class Hotel {
 		return null;
 	}
 
-	//se Modifico
 	public boolean verifyMail(String mail) {
-		return mail.contains("@")&& mail.endsWith(".com");
+		return mail.contains("@gmail")&& mail.endsWith(".com");
 	}
+	
+	public void verifyCCV(int CCV){
+		
+	}
+	
+	public void verifyCardCode(int cardCode) {
+		
+	}
+	
 
 	public long calculateTotalValueOfReserve(Reserve reserve) {
 		int currentPriceReserve=reserve.getHotelRoom().getRoomPrice();
