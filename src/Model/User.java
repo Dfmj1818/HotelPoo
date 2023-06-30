@@ -54,10 +54,19 @@ public class User {
 	}
 
 	public String viewReservesList() {
+		StringBuilder reserveInformation=new StringBuilder();
 		for(int i=0;i<reservesList.size();i++) {
-			Reserve currentReserve=reservesList.get(i);
-			listAsString+="Datos de la Habitacion del Hotel: "+currentReserve.getHotelRoom().getRoomDescription()+"\nFecha de llegada Al hotel "+currentReserve.getArrivalDate()+"\nFecha de Salida Del hotel "+currentReserve.getDepartureDate()+"\n";
+			reserveInformation.append("Descripcion Del Hotel: ");
+			reserveInformation.append(reservesList.get(i).getHotelRoom().getRoomDescription());
+			reserveInformation.append(" Fecha De llegada Al Hotel");
+			reserveInformation.append(reservesList.get(i).getArrivalDate());
+			reserveInformation.append(" Fecha de salida Del Hotel");
+			reserveInformation.append(reservesList.get(i).getDepartureDate());
+			reserveInformation.append("\n");
 		}
-		return listAsString;
+		return reserveInformation.toString();
 	}
+
 }
+
+
