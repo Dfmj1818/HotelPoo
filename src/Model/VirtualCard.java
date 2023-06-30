@@ -40,12 +40,12 @@ public class VirtualCard {
 	}
 
 	public LocalDate getExpirationDate() {
-		return expirationDate;
+		return  expirationDate;
 	}
 	//Se hizo Correccion 
 	public int generateRandomFunds() {
 		Random randomFunds=new Random();   
-		return randomFunds.nextInt(500000);
+		return randomFunds.nextInt(500000)+350000;
 	}
 
 
