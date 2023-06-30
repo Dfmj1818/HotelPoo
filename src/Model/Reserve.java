@@ -8,7 +8,6 @@ public class Reserve {
 	public User user;
 	public HotelRoom hotelRoom;
 	
-
 	public Reserve(User user,HotelRoom hotelRoom,LocalDate arrivalDate,LocalDate departureDate) {
 		this.arrivalDate=arrivalDate;
 		this.departureDate=departureDate;
