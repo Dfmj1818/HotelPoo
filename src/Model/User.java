@@ -58,9 +58,11 @@ public class User {
 		for(int i=0;i<reservesList.size();i++) {
 			reserveInformation.append("Descripcion Del Hotel: ");
 			reserveInformation.append(reservesList.get(i).getHotelRoom().getRoomDescription());
-			reserveInformation.append(" Fecha De llegada Al Hotel");
+			reserveInformation.append("\n");
+			reserveInformation.append(" Fecha De llegada Al Hotel ");
 			reserveInformation.append(reservesList.get(i).getArrivalDate());
-			reserveInformation.append(" Fecha de salida Del Hotel");
+			reserveInformation.append("\n");
+			reserveInformation.append(" Fecha de salida Del Hotel ");
 			reserveInformation.append(reservesList.get(i).getDepartureDate());
 			reserveInformation.append("\n");
 		}
