@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
+import Exceptions.DataCreditException;
 import Exceptions.UserNotFoundException;
 import View.View;
 
@@ -13,8 +14,8 @@ public class Hotel {
 	private ArrayList<Reserve>hotelReservesList;
 	private View view;
 	private String listAsString;
-    
-    
+
+
 	public Hotel() {
 		hotelRoomsList=new ArrayList<HotelRoom>();
 		usersDataBase=new ArrayList<User>();
@@ -36,25 +37,15 @@ public class Hotel {
 		hotelReservesList.add(reserve);
 	}
 
-	public void checkRoomAvaiability(Reserve reserve) {
-		if(hotelReservesList.isEmpty()) {
-           view.showMessage("Esta Habitacion No tiene Reservas Previas,Todas Las Fechas Estan Disponibles");
-		}
-		else {
-			for(int i=0;i<hotelReservesList.size();i++) {		
-				if(hotelReservesList.get(i).getHotelRoom().getRoomId()==reserve.getHotelRoom().getRoomId()){
-					Reserve reserveToVerify=hotelReservesList.get(i);
-					LocalDate arrivalDateOfThePreviousReserve=reserveToVerify.getArrivalDate();
-					LocalDate departureDateOfThePreviousReserve=reserveToVerify.getDepartureDate();
-			        //IMPLEMENTACION PENDIENTE
-				}
+	public boolean checkRoomAvaiability(LocalDate arrivalDateOfCurrentReserve,LocalDate departureDateOfCurrentReserve) {
+		for(int i=0;i<hotelReservesList.size();i++){
+			if(arrivalDateOfCurrentReserve.isBefore(hotelReservesList.get(i).getDepartureDate())&&departureDateOfCurrentReserve.isAfter(hotelReservesList.get(i).getArrivalDate())||arrivalDateOfCurrentReserve.isEqual(hotelReservesList.get(i).arrivalDate)){
+				return true;
 			}
-		}	
+		}
+		return false;
 
 	}
-
-
-
 	public User getUserInUsersDatabase(User user) {
 		for(int i=0;i<usersDataBase.size();i++) {
 			if(usersDataBase.get(i).getUserMail().equals(user.getUserMail())&&usersDataBase.get(i).getUserPassword().equals(user.getUserPassword())) {
@@ -85,11 +76,11 @@ public class Hotel {
 		HotelRoom simpleHotelRoom=new HotelRoom(3,50000,"Piso 1",false,false,false," Habitacion Sencilla que viene con unicamente una cama sencilla y television");
 		addRoomsToHotel(simpleHotelRoom);
 	}
-	
+
 
 	public String showHotelRooms() {
 		StringBuilder roomInformation=new StringBuilder();
-		
+
 		for(int i=0;i<hotelRoomsList.size();i++) {
 			HotelRoom currentHotelRoom=hotelRoomsList.get(i);
 			roomInformation.append("Id ");
@@ -101,7 +92,7 @@ public class Hotel {
 			roomInformation.append("\n");
 		}	
 		return roomInformation.toString();
-		
+
 	}
 
 
@@ -128,15 +119,23 @@ public class Hotel {
 	public boolean verifyMail(String mail) {
 		return mail.contains("@gmail")&& mail.endsWith(".com");
 	}
-	
-	public void verifyCCV(int CCV){
-		
+
+	public boolean verifyCCV(int CCV){
+		String CCVAsString=String.valueOf(CCV);
+		if(CCVAsString.length()==3){
+			return true;
+		}
+		return false;
 	}
-	
-	public void verifyCardCode(int cardCode) {
-		
+
+	public boolean verifyCardCode(long cardCode) {
+		String cardCodeAsString=String.valueOf(cardCode);
+		if(cardCodeAsString.length()==10){
+			return true;
+		}		
+		return false;
 	}
-	
+
 
 	public long calculateTotalValueOfReserve(Reserve reserve) {
 		int currentPriceReserve=reserve.getHotelRoom().getRoomPrice();
