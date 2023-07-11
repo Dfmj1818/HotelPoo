@@ -5,7 +5,9 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 import Exceptions.AttemptsExceededException;
+import Exceptions.DataCreditException;
 import Exceptions.InsufficientFundsException;
+import Exceptions.RoomOccupiedException;
 import Exceptions.UserNotFoundException;
 import Model.Hotel;
 import Model.HotelRoom;
@@ -26,8 +28,8 @@ public class Presenter {
 	private String digitedName;	
 	private String arrivalDateString;
 	private String departureDateString;
-	int attempts=0;
-	
+	private int loginUserAttempts=0;
+	private int registerVirtualCardAttempts=0;
 
 
 	public Presenter() {
@@ -77,16 +79,16 @@ public class Presenter {
 					runServices(currentUser);
 				}
 				catch (UserNotFoundException e) {
-					attempts++;
+					loginUserAttempts++;
 					view.showMessage("Error:"+e.getMessage());
-					if(attempts>5) {
+					if(loginUserAttempts>5) {
 						throw new AttemptsExceededException();
 					}
 					else{
 						this.loginUser();
 					}
 				}
-				
+
 				break;
 			case 3:
 				view.showMessage("Saliendo de la aplicacion");
@@ -154,59 +156,87 @@ public class Presenter {
 				break;
 			}
 
+			
 		}while(digitedOptionForSecondMenu!=3);
 
 	}
 
 
 	public void createUserReserve(User user,int choosedRoomByUser){
-
 		HotelRoom choosedRoom=hotel.chooseRoom(choosedRoomByUser); 
 		view.showMessage("Digita la fecha de llegada Al Hotel\n Por favor digitala en formato dia/mes/año");
 		arrivalDateString=view.readString();
 		DateTimeFormatter hotelDateFormat=DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		LocalDate arrivalDate=LocalDate.parse(arrivalDateString,hotelDateFormat); 
 		view.showMessage("Digita Tu Fecha de Salida Del Hotel\n Por favor Digitala en formato dia/mes/año");
-		departureDateString=view.readString();
+		departureDateString=view.readString(); 
 		LocalDate departureDate=LocalDate.parse(departureDateString,hotelDateFormat);
-		Reserve currentReserve =hotel.createReserveForUser(user, choosedRoom, arrivalDate, departureDate);
-		view.showMessage("El valor total De la Reserva es de:"+hotel.calculateTotalValueOfReserve(currentReserve));
-		if(verifyUserVirtualCardFunds(user,choosedRoom)==true) {
-			view.showMessage("Reserva añadida Con Exito");
-			user.addReserveToList(currentReserve);
-			hotel.addReservesTohotelReservesList(currentReserve);
-		}
-		else {
-			throw new InsufficientFundsException();
-		}
-
-
-
+        if(hotel.checkRoomAvaiability(arrivalDate,departureDate)==false){
+        	Reserve currentReserve =hotel.createReserveForUser(user, choosedRoom, arrivalDate, departureDate);
+    		view.showMessage("El valor total De la Reserva es de:"+hotel.calculateTotalValueOfReserve(currentReserve));
+    		VirtualCard createdVirtualCard=registerVirtualCardInformation(user,choosedRoom);
+    		if(verifyUserVirtualCardFunds(createdVirtualCard,choosedRoom)==true) {
+    			view.showMessage("Reserva añadida Con Exito");
+    			user.addReserveToList(currentReserve);
+    			hotel.addReservesTohotelReservesList(currentReserve);
+    		}
+    		else {
+    			throw new InsufficientFundsException();
+    		}
+    		
+        }
+        
+        else {
+        	throw new RoomOccupiedException();
+        }
+		
 
 	}
 
 
-	public boolean verifyUserVirtualCardFunds(User user,HotelRoom choosedRoomByUser) {
-
+	public VirtualCard registerVirtualCardInformation(User user,HotelRoom choosedRoomByUser) {
 		int CCV;
-		int cardCode;
+		long cardCode;
 		String expirationDateAsString;
 		LocalDate expirationDate;
-		boolean sufficientFundsOnCard;
+		
 		view.showMessage("Digita el Codigo de tu tarjeta");
 		cardCode=view.readInt();
-		view.showMessage("Digita el CCV de tu Tarjeta");
-		CCV=view.readInt();
-		view.showMessage("Digita la fecha De Expiracion de tu tarjeta");
-		expirationDateAsString=view.readString();
-		DateTimeFormatter expeditionDateFormat=DateTimeFormatter.ofPattern("dd/MM/yyyy");
-		expirationDate=LocalDate.parse(expirationDateAsString,expeditionDateFormat);
-		VirtualCard virtualCard=new VirtualCard(user,cardCode,CCV,expirationDate);
+		  if(hotel.verifyCardCode(cardCode)){
+			do {
+				view.showMessage("Digita el CCV de tu tarjeta");
+				CCV=view.readInt();	
+			}while(hotel.verifyCCV(CCV)==false);					
+			view.showMessage("Digita la fecha De Expiracion de tu tarjeta en formato dia mes año");
+			expirationDateAsString=view.readString();
+			DateTimeFormatter expeditionDateFormat=DateTimeFormatter.ofPattern("dd/MM/yyyy");
+			expirationDate=LocalDate.parse(expirationDateAsString,expeditionDateFormat);
+			VirtualCard virtualCard=new VirtualCard(user,cardCode,CCV,expirationDate);
+            verifyUserVirtualCardFunds(virtualCard, choosedRoomByUser);
+            return virtualCard;
+		}
+		else {
+			registerVirtualCardAttempts++;
+			 if(registerVirtualCardAttempts>=5){
+				throw new AttemptsExceededException();
+			 }
+			  else {
+				this.registerVirtualCardInformation(user,choosedRoomByUser);
+			}
+
+		}
+	    return null;
+	}
+
+	public boolean verifyUserVirtualCardFunds(VirtualCard virtualCard,HotelRoom choosedRoomByUser) {
 		//Verifica Los Fondos de la tarjeta,Si los fondos son suficientes retorna True ,Si son Insuficientes Retorna False
-		sufficientFundsOnCard=hotel.verifyUserFunds(virtualCard, choosedRoomByUser); 
-
-		return sufficientFundsOnCard;
-
+		boolean sufficientFundsOnCard=hotel.verifyUserFunds(virtualCard, choosedRoomByUser); 
+		 if(sufficientFundsOnCard){
+			return sufficientFundsOnCard;
+		}
+		 else {
+			return false;
+		}
 	}
 
 
