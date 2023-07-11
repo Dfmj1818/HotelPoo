@@ -5,13 +5,13 @@ import java.util.Random;
 
 public class VirtualCard {
 
-	private int cardCode;
+	private long cardCode;
 	private int funds;
 	private int CCV;
 	private LocalDate expirationDate;
 
 
-	public VirtualCard(User user,int cardCode,int CCV,LocalDate expirationDate) {	
+	public VirtualCard(User user,long cardCode,int CCV,LocalDate expirationDate) {	
 		this.expirationDate=expirationDate;
 		this.cardCode=cardCode;
 		this.funds=generateRandomFunds();
@@ -19,11 +19,11 @@ public class VirtualCard {
 
 	}
 
-	public void setCardCode(int cardCode) {
+	public void setCardCode(long cardCode) {
 		this.cardCode=cardCode;
 	}
 
-	public int getCardCode() {
+	public long getCardCode() {
 		return cardCode;
 	}
 
